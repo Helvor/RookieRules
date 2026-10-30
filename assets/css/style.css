@@ -341,3 +341,12 @@ mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- Choix de la langue ---------- */
+.lang-btn {
+  margin-left: 4px; min-height: 36px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+}
+.lang-btn:hover { background: var(--surface-2); }
+@media (max-width: 760px) { .lang-btn { margin-left: auto; } }

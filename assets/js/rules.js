@@ -1,24 +1,29 @@
 // Affichage, navigation et recherche dans le texte des règles (data/rules.json).
 import { esc, inline, norm, normWithMap, stripMd } from "./util.js";
+import { dataFile, t } from "./i18n.js";
 import { adapt } from "./prefs.js";
 
 let rules = null;
+const loaded = new Map(); // fichier -> règles déjà chargées
 const anchors = new Map(); // id -> { chapter, section, block, label }
 const searchIndex = [];
 
-export const PARTS = [
-  { id: "intro", label: "Introduction" },
-  { id: "rules", label: "Règles" },
-  { id: "appendix", label: "Appendices" },
-  { id: "glossary", label: "Glossaire" },
-  { id: "casebook", label: "Livret de mises en situations" },
-];
+export const PARTS = ["intro", "rules", "appendix", "glossary", "casebook"].map((id) => ({
+  id,
+  get label() { return t(`part.${id}`); },
+}));
 
+// Charge les règles de la langue courante et reconstruit l'index de recherche.
 export async function loadRules() {
-  if (rules) return rules;
-  const res = await fetch("data/rules.json");
-  rules = adapt(await res.json());
-  buildIndex();
+  const file = dataFile("rules");
+  if (!loaded.has(file)) {
+    const res = await fetch(file);
+    loaded.set(file, adapt(await res.json()));
+  }
+  if (rules !== loaded.get(file)) {
+    rules = loaded.get(file);
+    buildIndex();
+  }
   return rules;
 }
 
@@ -33,6 +38,8 @@ function sectionLabel(chapter, section) {
 }
 
 function buildIndex() {
+  anchors.clear();
+  searchIndex.length = 0;
   for (const chapter of rules.chapters) {
     anchors.set(chapter.id, { chapter, section: chapter.sections[0], label: chapterLabel(chapter) });
     for (const section of chapter.sections) {
@@ -45,8 +52,8 @@ function buildIndex() {
       section.blocks.forEach((block, i) => {
         if (block.id) {
           anchor = block.id;
-          if (block.type === "term") where = `Glossaire · ${block.text}`;
-          else if (block.type === "scenario") where = `${block.text} (livret)`;
+          if (block.type === "term") where = t("ref.glossaryWhere", { term: block.text });
+          else if (block.type === "scenario") where = t("ref.casebookWhere", { label: block.text });
           else where = `${sectionLabel(chapter, section)} · ${block.text}`;
           anchors.set(block.id, { chapter, section, block: i, label: block.type === "h" ? `${sectionLabel(chapter, section)} · ${block.text}` : where });
         }
@@ -60,7 +67,7 @@ function buildIndex() {
 }
 
 export function chapterLabel(chapter) {
-  if (chapter.part === "casebook") return `Livret · ${chapter.num}. ${chapter.title}`;
+  if (chapter.part === "casebook") return t("ref.casebookChapter", { num: chapter.num, title: chapter.title });
   if (chapter.num) return `${chapter.num}. ${chapter.title}`;
   return chapter.title;
 }
@@ -72,9 +79,9 @@ export function resolve(id) {
 export function refLabel(id) {
   const a = anchors.get(id);
   if (!a) return id;
-  if (id.startsWith("g-")) return `Glossaire : ${a.section.blocks[a.block].text}`;
+  if (id.startsWith("g-")) return t("ref.glossary", { term: a.section.blocks[a.block].text });
   if (a.section && a.block === undefined && a.section.level > 1) {
-    return a.chapter.part === "casebook" ? `Livret, ${a.label}` : `Section ${a.label}`;
+    return a.chapter.part === "casebook" ? t("ref.casebook", { label: a.label }) : t("ref.section", { label: a.label });
   }
   return a.label;
 }
@@ -125,7 +132,7 @@ function renderBlocks(blocks, { from = 0, to = blocks.length } = {}) {
         html += `<figure><img src="${esc(b.src)}" alt="${esc(b.alt)}" loading="lazy">${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ""}</figure>`;
         break;
       case "table":
-        html += `<table><thead><tr>${b.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${b.rows
+        html += `<table>${b.head.length ? `<thead><tr>${b.head.map((h) => `<th>${esc(h)}</th>`).join("")}</tr></thead>` : ""}<tbody>${b.rows
           .map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`)
           .join("")}</tbody></table>`;
         break;
@@ -152,7 +159,7 @@ export function renderChapter(chapter) {
 // Extrait affiché dans la feuille « Voir la règle » du quiz.
 export function renderFragment(id) {
   const a = anchors.get(id);
-  if (!a) return { title: id, html: "<p>Règle introuvable.</p>" };
+  if (!a) return { title: id, html: `<p>${t("rules.missing")}</p>` };
   const { chapter, section } = a;
   const blocks = section.blocks;
   if (a.block !== undefined) {
@@ -167,7 +174,7 @@ export function renderFragment(id) {
   if (section.level === 1 && chapter.sections.length === 1) {
     return { title: chapterLabel(chapter), html: renderBlocks(blocks) };
   }
-  return { title: sectionLabel(chapter, section), html: renderBlocks(blocks) || "<p class='muted'>Voir les sous-sections.</p>" };
+  return { title: sectionLabel(chapter, section), html: renderBlocks(blocks) || `<p class="muted">${t("rules.seeSubsections")}</p>` };
 }
 
 // ---------- Recherche ----------
