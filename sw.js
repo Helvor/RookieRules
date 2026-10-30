@@ -8,6 +8,8 @@ const PRECACHE = [
   "manifest.webmanifest",
   "assets/css/style.css",
   "assets/js/app.js",
+  "assets/js/ecriture.js",
+  "assets/js/prefs.js",
   "assets/js/quiz.js",
   "assets/js/rules.js",
   "assets/js/store.js",

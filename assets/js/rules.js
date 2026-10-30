@@ -1,5 +1,6 @@
 // Affichage, navigation et recherche dans le texte des règles (data/rules.json).
 import { esc, inline, norm, normWithMap, stripMd } from "./util.js";
+import { adapt } from "./prefs.js";
 
 let rules = null;
 const anchors = new Map(); // id -> { chapter, section, block, label }
@@ -16,7 +17,7 @@ export const PARTS = [
 export async function loadRules() {
   if (rules) return rules;
   const res = await fetch("data/rules.json");
-  rules = await res.json();
+  rules = adapt(await res.json());
   buildIndex();
   return rules;
 }

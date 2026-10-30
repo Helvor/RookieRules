@@ -8,6 +8,7 @@ Application web pour réviser les règles du roller derby (WFTDA, version franç
 - **Examen blanc** : 20 questions, 30 secondes par question, réussite à 17/20.
 - **Révisions** : reprise des questions ratées (progression enregistrée uniquement dans le navigateur).
 - **Règles** : texte intégral (règles, appendices, glossaire, livret de mises en situation) avec les schémas du PDF, recherche par mot-clé ou par numéro (`4.1.2`, `C4.3.D`…). Chaque question renvoie vers la règle correspondante.
+- **Écriture** : textes en écriture inclusive (point médian, comme la traduction officielle), avec une option « tout au féminin » plus facile à lire (dyslexie, lecteurs d'écran), dans la page Réglages.
 - **Hors ligne** : installable sur téléphone (PWA), fonctionne sans connexion après la première visite.
 
 Site statique sans étape de compilation : HTML, CSS et JavaScript (modules ES).
@@ -51,6 +52,16 @@ python3 tools/validate.py
 ```
 
 Le script contrôle les identifiants, les références aux règles, les réponses, les images et la liste de mise en cache du service worker (`sw.js`). Le workflow refuse de publier si la validation échoue.
+
+## Écriture inclusive et option « tout au féminin »
+
+Questions, explications et textes de l'interface s'écrivent en écriture inclusive avec le point médian, comme les règles officielles : `le·la Jammeur·se`, `pénalisé·e`, `ielle`. Pour les mots sans marque, écrire aussi la forme inclusive des déterminants (`son·sa Pivot`, `un·e Capitaine`).
+
+L'option « tout au féminin » (page Réglages, `assets/js/prefs.js`) convertit tous ces textes au chargement avec `assets/js/ecriture.js` : `la Jammeuse`, `pénalisée`, `elle`. Un texte d'interface genré passe par `prefs.w("…")`. Les formes irrégulières sont listées dans `PAIRS` et `PHRASES`. Pour vérifier la conversion (plus aucun point médian, réponses toujours distinctes) :
+
+```sh
+node tools/check_ecriture.mjs          # --list affiche chaque forme et sa conversion
+```
 
 ## Mettre à jour les règles
 
