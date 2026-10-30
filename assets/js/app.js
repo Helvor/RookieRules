@@ -334,14 +334,21 @@ function showCorrection(item, buttons) {
     else if (j === item.chosen) b.classList.add("wrong");
   });
   const ok = isRight(item);
-  document.getElementById("feedback").innerHTML = `
+  // En cas de bonne réponse, l'explication est repliée pour enchaîner plus vite.
+  const explanation = `<p>${esc(item.q.why)}</p>${refButton(item.q.ref)}`;
+  const feedback = document.getElementById("feedback");
+  feedback.innerHTML = `
     <div class="card feedback ${ok ? "ok" : "ko"}">
       <h3>${ok ? "Bonne réponse !" : item.timedOut ? "Temps écoulé" : "Mauvaise réponse"}</h3>
-      ${ok ? "" : `<p>Réponse attendue : <strong>${esc(item.q.a)}</strong></p>`}
-      <p>${esc(item.q.why)}</p>
-      ${refButton(item.q.ref)}
+      ${ok ? `<details class="why">
+        <summary>Voir l’explication</summary>
+        ${explanation}
+      </details>` : `<p>Réponse attendue : <strong>${esc(item.q.a)}</strong></p>${explanation}`}
     </div>`;
-  bindRefButtons(document.getElementById("feedback"));
+  bindRefButtons(feedback);
+  // Fait apparaître la correction au-dessus de la barre d'actions collée en bas.
+  const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  feedback.firstElementChild.scrollIntoView({ block: "nearest", behavior: smooth ? "smooth" : "auto" });
 }
 
 function refButton(ref) {
