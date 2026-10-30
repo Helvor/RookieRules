@@ -214,13 +214,28 @@ legend { font-weight: 700; margin-bottom: 10px; }
 
 .feedback { margin-top: 16px; border-left: 5px solid var(--ok); }
 .feedback.ko { border-left-color: var(--ko); }
+.feedback { scroll-margin-bottom: 90px; }
+@media (max-width: 760px) { .feedback { scroll-margin-bottom: calc(90px + var(--nav-h) + env(safe-area-inset-bottom)); } }
 .feedback h3 { margin: 0 0 6px; font-size: 1.05rem; }
 .feedback.ok h3 { color: var(--ok); }
 .feedback.ko h3 { color: var(--ko); }
 .feedback p { margin: 0 0 8px; }
 .ref-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 650; background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
 
-.quiz-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.feedback .why summary { cursor: pointer; font-weight: 650; color: var(--accent); width: fit-content; }
+.feedback .why[open] summary { margin-bottom: 8px; }
+.feedback .why p:last-child { margin-bottom: 0; }
+
+/* Barre collée en bas de l'écran : « Question suivante » reste accessible sans scroller */
+.quiz-actions {
+  position: sticky; bottom: 0; z-index: 5;
+  display: flex; justify-content: space-between; gap: 10px; margin-top: 18px;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--bg) 14px);
+}
+@media (max-width: 760px) {
+  .quiz-actions { bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); padding-bottom: 10px; }
+}
 .quiz-actions .btn.primary { margin-left: auto; }
 .kbd-hint { color: var(--muted); font-size: 0.8rem; text-align: center; margin-top: 14px; }
 @media (hover: none) { .kbd-hint { display: none; } }
