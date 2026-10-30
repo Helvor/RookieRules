@@ -1,6 +1,8 @@
 // RookieRules : routeur et vues de l'application.
 import { esc, norm, parseHash, plural } from "./util.js";
+import { feminize } from "./ecriture.js";
 import * as store from "./store.js";
+import * as prefs from "./prefs.js";
 import { EXAM, answer, createSession, finish, getBank, isRight, loadQuestions, pick, score, themeById } from "./quiz.js";
 import {
   PARTS, chapterLabel, findById, getRules, loadRules, refLabel, renderChapter, renderFragment, resolve, search,
@@ -22,9 +24,10 @@ const routes = {
   regles: viewRules,
   revisions: viewReview,
   "a-propos": viewAbout,
+  reglages: viewSettings,
 };
 
-const NAV = { "": "home", entrainement: "train", examen: "exam", regles: "rules", revisions: "review" };
+const NAV = { "": "home", entrainement: "train", examen: "exam", regles: "rules", revisions: "review", reglages: "settings" };
 
 function route() {
   const { parts, params } = parseHash();
@@ -554,7 +557,7 @@ function showRule(id, hl) {
             ${prev ? `<a class="btn" href="#/regles/${esc(prev.id)}">← ${esc(chapterLabel(prev))}</a>` : "<span></span>"}
             ${next ? `<a class="btn" href="#/regles/${esc(next.id)}">${esc(chapterLabel(next))} →</a>` : "<span></span>"}
           </div>
-          <p class="source-note">${esc(getRules().copyright)} · Texte reproduit depuis la <a href="${esc(getRules().source)}" target="_blank" rel="noopener">version PDF officielle</a> (page ${chapter.page} et suivantes).</p>
+          <p class="source-note">${esc(getRules().copyright)} · Texte reproduit depuis la <a href="${esc(getRules().source)}" target="_blank" rel="noopener">version PDF officielle</a> (page ${chapter.page} et suivantes).${feminineNote()}</p>
         </article>
       </div>`;
     bindSearch();
@@ -630,6 +633,65 @@ document.getElementById("sheet").addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeSheet();
 });
+
+function feminineNote() {
+  return prefs.get("ecriture") === prefs.ECRITURES.feminin
+    ? ` Affiché ici tout au féminin pour faciliter la lecture ; la version officielle est en écriture inclusive (<a href="#/reglages">réglages</a>).`
+    : "";
+}
+
+// ---------- Réglages ----------
+
+const ECRITURE_CHOICES = [
+  {
+    id: prefs.ECRITURES.inclusive,
+    label: "Écriture inclusive",
+    hint: "Par défaut. Avec le point médian, comme la traduction officielle des règles.",
+  },
+  {
+    id: prefs.ECRITURES.feminin,
+    label: "Tout au féminin",
+    hint: "Lecture facilitée (dys-friendly) : sans point médian, tous les rôles et accords au féminin. Plus confortable avec une dyslexie ou un lecteur d’écran. Le sens des règles ne change pas.",
+  },
+];
+
+const ECRITURE_EXAMPLE = "Le·la Jammeur·se est envoyé·e en Penalty Box : ielle doit s’asseoir avant que son·sa coéquipier·ère ne reprenne l’Étoile.";
+
+function viewSettings() {
+  setTitle("Réglages");
+  const current = prefs.get("ecriture");
+  app.innerHTML = `
+    <h1>Réglages</h1>
+    <form class="card" id="settings-form">
+      <fieldset>
+        <legend>Écriture</legend>
+        <div class="options">
+          ${ECRITURE_CHOICES.map((c) => `<label class="option">
+            <input type="radio" name="ecriture" value="${c.id}" ${c.id === current ? "checked" : ""}>
+            <span><b>${esc(c.label)}</b><span class="muted small">${esc(c.hint)}</span></span>
+          </label>`).join("")}
+        </div>
+      </fieldset>
+      <p class="small"><span class="muted">Exemple :</span> <span id="ecriture-example"></span></p>
+      <p class="muted small">S’applique aux questions, aux explications et au texte des règles. Le réglage est enregistré dans ce navigateur.</p>
+    </form>`;
+  const form = document.getElementById("settings-form");
+  const example = document.getElementById("ecriture-example");
+  const preview = () => {
+    const choice = form.querySelector("input[name=ecriture]:checked").value;
+    example.textContent = choice === prefs.ECRITURES.feminin ? feminize(ECRITURE_EXAMPLE) : ECRITURE_EXAMPLE;
+  };
+  form.addEventListener("change", () => {
+    const choice = form.querySelector("input[name=ecriture]:checked").value;
+    preview();
+    if (choice === prefs.get("ecriture")) return;
+    prefs.set("ecriture", choice);
+    // Les questions et les règles sont converties au chargement : on recharge.
+    location.reload();
+  });
+  preview();
+  focusMain();
+}
 
 // ---------- À propos ----------
 

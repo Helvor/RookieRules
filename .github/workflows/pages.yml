@@ -22,6 +22,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Vérifier les questions et les références aux règles
         run: python3 tools/validate.py
+      - name: Vérifier la conversion « tout au féminin »
+        run: node tools/check_ecriture.mjs
       - name: Préparer le site
         run: |
           mkdir _site

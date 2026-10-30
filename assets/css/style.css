@@ -90,6 +90,8 @@ button { font: inherit; color: inherit; }
 }
 .mainnav a:hover { background: var(--surface-2); color: var(--text); }
 .mainnav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-strong); }
+.settings-link { display: inline-flex; align-items: center; justify-content: center; flex: none; text-decoration: none; }
+.settings-link[aria-current="page"] { background: var(--accent-soft); }
 
 @media (max-width: 760px) {
   .mainnav {
@@ -104,6 +106,7 @@ button { font: inherit; color: inherit; }
   body { padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); }
   /* backdrop-filter créerait un bloc conteneur pour la barre fixe du bas */
   .topbar { backdrop-filter: none; background: var(--surface); }
+  .settings-link { margin-left: auto; }
 }
 
 main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 20px 16px 40px; }
@@ -183,6 +186,18 @@ legend { font-weight: 700; margin-bottom: 10px; }
 }
 .chip input:checked + span { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong); }
 .chip input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
+
+/* ---------- Réglages ---------- */
+.options { display: grid; gap: 10px; }
+.option { position: relative; display: block; }
+.option input { position: absolute; opacity: 0; inset: 0; }
+.option > span {
+  display: grid; gap: 4px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); cursor: pointer;
+}
+.option input:checked + span { background: var(--accent-soft); border-color: var(--accent); }
+.option input:checked + span b { color: var(--accent-strong); }
+.option input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
 
 /* ---------- Quiz ---------- */
 .quiz { max-width: 720px; margin: 0 auto; }

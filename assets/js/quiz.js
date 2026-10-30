@@ -1,6 +1,7 @@
 // Moteur de quiz : tirage des questions, mélange des réponses, correction.
 import { shuffle } from "./util.js";
 import { answerOf, recordAnswer, recordSession } from "./store.js";
+import { adapt } from "./prefs.js";
 
 export const EXAM = { size: 20, seconds: 30, pass: 17 };
 
@@ -9,7 +10,7 @@ let bank = null;
 export async function loadQuestions() {
   if (bank) return bank;
   const res = await fetch("data/questions.json");
-  bank = await res.json();
+  bank = adapt(await res.json());
   return bank;
 }
 
