@@ -1,6 +1,6 @@
 // Service worker : met l'application en cache pour l'utiliser hors ligne.
 // Les fichiers sont servis « réseau d'abord » : changer VERSION n'est utile que pour purger l'ancien cache.
-const VERSION = "rookierules-v1";
+const VERSION = "rookierules-v2";
 
 const PRECACHE = [
   "./",
@@ -8,12 +8,15 @@ const PRECACHE = [
   "manifest.webmanifest",
   "assets/css/style.css",
   "assets/js/app.js",
+  "assets/js/i18n.js",
   "assets/js/quiz.js",
   "assets/js/rules.js",
   "assets/js/store.js",
   "assets/js/util.js",
   "data/rules.json",
   "data/questions.json",
+  "data/rules.en.json",
+  "data/questions.en.json",
   "assets/icons/favicon.svg",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
@@ -28,6 +31,13 @@ const PRECACHE = [
   "assets/figures/c2-3-a.png",
   "assets/figures/c2-3-b.png",
   "assets/figures/c2-3-c.png",
+  "assets/figures/en/track_dimensions.png",
+  "assets/figures/en/target_zones.png",
+  "assets/figures/en/blocking_zones.png",
+  "assets/figures/en/c-gameplay-positions.png",
+  "assets/figures/en/c-gameplay-pack-blocked-out.png",
+  "assets/figures/en/c-gameplay-front-skates-forward.png",
+  "assets/figures/en/c-gameplay-pack-stretch.png",
 ];
 
 self.addEventListener("install", (event) => {
