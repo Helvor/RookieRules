@@ -1,9 +1,12 @@
 // RookieRules : routeur et vues de l'application.
-import { esc, norm, parseHash, plural } from "./util.js";
+import { esc, norm, parseHash } from "./util.js";
 import { feminize } from "./ecriture.js";
 import * as store from "./store.js";
 import * as prefs from "./prefs.js";
-import { EXAM, answer, createSession, finish, getBank, isRight, loadQuestions, pick, score, themeById } from "./quiz.js";
+import { getLang, setLang, t, translatePage } from "./i18n.js";
+import {
+  EXAM, answer, createSession, finish, getBank, isRight, loadQuestions, pick, score, themeById, translateSession,
+} from "./quiz.js";
 import {
   PARTS, chapterLabel, findById, getRules, loadRules, refLabel, renderChapter, renderFragment, resolve, search,
 } from "./rules.js";
@@ -69,46 +72,46 @@ function viewHome() {
   const review = store.toReview().length;
   app.innerHTML = `
     <section class="hero">
-      <h1>Révise les règles du roller derby</h1>
-      <p class="lead">Comme pour le code de la route : des séries de questions tirées au hasard, un examen blanc chronométré, et les règles officielles WFTDA en français, consultables à tout moment.</p>
+      <h1>${t("home.title")}</h1>
+      <p class="lead">${t("home.lead")}</p>
     </section>
     <div class="grid">
       <a class="card mode-card featured" href="#/quiz?mode=train&n=20">
         <span class="emoji" aria-hidden="true">🎲</span>
-        <h3>Série rapide</h3>
-        <p>20 questions au hasard sur tous les thèmes, avec la correction et la règle après chaque réponse.</p>
+        <h3>${t("home.quick")}</h3>
+        <p>${t("home.quickText")}</p>
       </a>
       <a class="card mode-card" href="#/examen">
         <span class="emoji" aria-hidden="true">⏱️</span>
-        <h3>Examen blanc</h3>
-        <p>${EXAM.size} questions, ${EXAM.seconds} secondes par question, correction à la fin. Réussite à ${EXAM.pass}/${EXAM.size}.</p>
+        <h3>${t("home.exam")}</h3>
+        <p>${t("home.examText", EXAM)}</p>
       </a>
       <a class="card mode-card" href="#/entrainement">
         <span class="emoji" aria-hidden="true">🎯</span>
-        <h3>Entraînement par thème</h3>
-        <p>Choisis tes thèmes et le nombre de questions.</p>
+        <h3>${t("home.themes")}</h3>
+        <p>${t("home.themesText")}</p>
       </a>
       <a class="card mode-card" href="#/revisions">
         <span class="emoji" aria-hidden="true">🔁</span>
-        <h3>Mes erreurs</h3>
-        <p>${review ? `${plural(review, "question à revoir", "questions à revoir")}.` : "Aucune erreur à revoir pour l’instant."}</p>
+        <h3>${t("home.mistakes")}</h3>
+        <p>${review ? t("home.mistakesCount", { n: review }) : t("home.noMistakes")}</p>
       </a>
     </div>
 
-    <h2>Chercher dans les règles</h2>
+    <h2>${t("home.search")}</h2>
     <form class="search-hero" role="search" id="home-search">
-      <input id="home-q" type="search" aria-label="Rechercher dans les règles" placeholder="Ex. : Star Pass, Lead, 4.2.2, C3.3.A…" autocomplete="off">
-      <button class="btn primary" type="submit">Chercher</button>
+      <input id="home-q" type="search" aria-label="${t("search.label")}" placeholder="${t("home.searchPlaceholder")}" autocomplete="off">
+      <button class="btn primary" type="submit">${t("search.submit")}</button>
     </form>
 
-    <h2>Ta progression</h2>
+    <h2>${t("home.progress")}</h2>
     <div class="card stats">
-      <div class="stat"><b>${s.seen}/${bank.questions.length}</b><span>questions déjà vues</span></div>
-      <div class="stat"><b>${s.rate === null ? "–" : s.rate + " %"}</b><span>de bonnes réponses</span></div>
-      <div class="stat"><b>${s.exams ? `${s.best}/${EXAM.size}` : "–"}</b><span>meilleur examen blanc</span></div>
+      <div class="stat"><b>${s.seen}/${bank.questions.length}</b><span>${t("home.seen")}</span></div>
+      <div class="stat"><b>${s.rate === null ? "–" : percent(s.rate)}</b><span>${t("home.rate")}</span></div>
+      <div class="stat"><b>${s.exams ? `${s.best}/${EXAM.size}` : "–"}</b><span>${t("home.best")}</span></div>
     </div>
 
-    <h2>Thèmes</h2>
+    <h2>${t("home.themeList")}</h2>
     <div class="theme-list">${themeRows()}</div>
   `;
   document.getElementById("home-search").addEventListener("submit", (e) => {
@@ -119,15 +122,19 @@ function viewHome() {
   focusMain();
 }
 
+function percent(n) {
+  return getLang() === "fr" ? `${n} %` : `${n}%`;
+}
+
 function themeRows() {
   const bank = getBank();
-  return bank.themes.map((t) => {
-    const qs = bank.questions.filter((q) => q.theme === t.id);
+  return bank.themes.map((theme) => {
+    const qs = bank.questions.filter((q) => q.theme === theme.id);
     const rate = store.themeRate(qs);
     const pct = rate === null ? 0 : Math.round(rate * 100);
-    return `<a class="card theme-row" href="#/quiz?mode=train&themes=${t.id}&n=10">
-      <span class="t">${t.icon} ${esc(t.label)}</span>
-      <span class="muted small">${qs.length} questions${rate === null ? "" : ` · ${pct} %`}</span>
+    return `<a class="card theme-row" href="#/quiz?mode=train&themes=${theme.id}&n=10">
+      <span class="t">${theme.icon} ${esc(theme.label)}</span>
+      <span class="muted small">${t("themes.count", { n: qs.length })}${rate === null ? "" : ` · ${percent(pct)}`}</span>
       <span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span>
     </a>`;
   }).join("");
@@ -136,34 +143,34 @@ function themeRows() {
 // ---------- Entraînement ----------
 
 function viewTrainSetup() {
-  setTitle("Entraînement");
+  setTitle(t("train.title"));
   const bank = getBank();
   app.innerHTML = `
-    <h1>Entraînement</h1>
-    <p class="lead">Correction immédiate, explication et lien vers la règle après chaque question.</p>
+    <h1>${t("train.title")}</h1>
+    <p class="lead">${t("train.lead")}</p>
     <form class="card" id="train-form">
       <fieldset>
-        <legend>Thèmes</legend>
+        <legend>${t("train.themes")}</legend>
         <div class="chips">
-          ${bank.themes.map((t) => `<label class="chip"><input type="checkbox" name="theme" value="${t.id}" checked><span>${t.icon} ${esc(t.label)}</span></label>`).join("")}
+          ${bank.themes.map((theme) => `<label class="chip"><input type="checkbox" name="theme" value="${theme.id}" checked><span>${theme.icon} ${esc(theme.label)}</span></label>`).join("")}
         </div>
-        <div class="btn-row"><button class="btn ghost" type="button" id="all-themes">Tout cocher</button><button class="btn ghost" type="button" id="no-themes">Tout décocher</button></div>
+        <div class="btn-row"><button class="btn ghost" type="button" id="all-themes">${t("train.all")}</button><button class="btn ghost" type="button" id="no-themes">${t("train.none")}</button></div>
       </fieldset>
       <fieldset>
-        <legend>Nombre de questions</legend>
+        <legend>${t("train.count")}</legend>
         <div class="chips">
           ${[10, 20, 40].map((n) => `<label class="chip"><input type="radio" name="n" value="${n}" ${n === 20 ? "checked" : ""}><span>${n}</span></label>`).join("")}
-          <label class="chip"><input type="radio" name="n" value="all"><span>Toutes</span></label>
+          <label class="chip"><input type="radio" name="n" value="all"><span>${t("train.everything")}</span></label>
         </div>
       </fieldset>
       <p class="muted small" id="train-count"></p>
-      <button class="btn primary" type="submit">Commencer</button>
+      <button class="btn primary" type="submit">${t("train.start")}</button>
     </form>`;
   const form = document.getElementById("train-form");
   const update = () => {
     const themes = [...form.querySelectorAll("input[name=theme]:checked")].map((i) => i.value);
     const count = bank.questions.filter((q) => themes.includes(q.theme)).length;
-    document.getElementById("train-count").textContent = `${count} questions disponibles avec ces thèmes.`;
+    document.getElementById("train-count").textContent = t("train.available", { n: count });
     form.querySelector("[type=submit]").disabled = count === 0;
   };
   form.addEventListener("change", update);
@@ -182,17 +189,17 @@ function viewTrainSetup() {
 // ---------- Examen ----------
 
 function viewExamIntro() {
-  setTitle("Examen blanc");
+  setTitle(t("exam.title"));
   app.innerHTML = `
-    <h1>Examen blanc</h1>
+    <h1>${t("exam.title")}</h1>
     <div class="card">
       <ul>
-        <li>${EXAM.size} questions tirées au hasard parmi tous les thèmes.</li>
-        <li>${EXAM.seconds} secondes par question : sans réponse validée à temps, la question compte comme fausse.</li>
-        <li>Pas de correction pendant l’examen : tu vois tout à la fin, avec les explications et les règles.</li>
-        <li>Examen réussi à partir de <strong>${EXAM.pass}/${EXAM.size}</strong>.</li>
+        <li>${t("exam.rule1", EXAM)}</li>
+        <li>${t("exam.rule2", EXAM)}</li>
+        <li>${t("exam.rule3")}</li>
+        <li>${t("exam.rule4", EXAM)}</li>
       </ul>
-      <div class="btn-row"><a class="btn primary" href="#/quiz?mode=exam">Démarrer l’examen</a></div>
+      <div class="btn-row"><a class="btn primary" href="#/quiz?mode=exam">${t("exam.start")}</a></div>
     </div>`;
   focusMain();
 }
@@ -228,10 +235,10 @@ function viewQuiz(_parts, params) {
   }
   if (!session || session.finished) {
     if (session?.finished) return go("#/resultats");
-    app.innerHTML = `<h1>Aucune question</h1><p class="lead">Rien à réviser avec ces critères.</p><a class="btn primary" href="#/">Retour à l’accueil</a>`;
+    app.innerHTML = `<h1>${t("quiz.none")}</h1><p class="lead">${t("quiz.noneText")}</p><a class="btn primary" href="#/">${t("quiz.backHome")}</a>`;
     return;
   }
-  setTitle(session.mode === "exam" ? "Examen blanc" : "Quiz");
+  setTitle(session.mode === "exam" ? t("exam.title") : t("quiz.title"));
   renderQuestion();
 }
 
@@ -247,23 +254,23 @@ function renderQuestion() {
   app.innerHTML = `
     <div class="quiz">
       <div class="quiz-top">
-        <span class="count">Question ${s.index + 1}/${total}</span>
+        <span class="count">${t("quiz.count", { i: s.index + 1, total })}</span>
         <span class="badge">${theme.icon} ${esc(theme.label)}</span>
         <span class="grow"></span>
         ${exam ? `<span class="timer" id="timer" aria-live="off"></span>` : `<span class="badge accent">${score(s)} ✓</span>`}
       </div>
       <div class="progress" aria-hidden="true"><i style="width:${(s.index / total) * 100}%"></i></div>
       <p class="question" id="q-text">${esc(item.q.q)}</p>
-      ${item.q.img ? `<div class="qimg"><img src="${esc(item.q.img)}" alt="Schéma de la question"></div>` : ""}
+      ${item.q.img ? `<div class="qimg"><img src="${esc(item.q.img)}" alt="${t("quiz.image")}"></div>` : ""}
       <ul class="choices" role="list" aria-labelledby="q-text">
         ${item.choices.map((c, i) => `<li><button class="choice" type="button" data-i="${i}"><span class="letter">${LETTERS[i]}</span><span>${esc(c)}</span></button></li>`).join("")}
       </ul>
       <div id="feedback" aria-live="polite"></div>
       <div class="quiz-actions">
-        <button class="btn ghost" type="button" id="quit">Arrêter</button>
-        <button class="btn primary" type="button" id="next" ${answered ? "" : "disabled"}>${exam ? "Valider" : nextLabel()}</button>
+        <button class="btn ghost" type="button" id="quit">${t("quiz.quit")}</button>
+        <button class="btn primary" type="button" id="next" ${answered ? "" : "disabled"}>${exam ? t("quiz.validate") : nextLabel()}</button>
       </div>
-      <p class="kbd-hint">Clavier : touches 1 à 4 (ou A à D) pour répondre, Entrée pour continuer.</p>
+      <p class="kbd-hint">${t("quiz.keys")}</p>
     </div>`;
 
   let selected = null;
@@ -302,7 +309,7 @@ function renderQuestion() {
   nextBtn.addEventListener("click", next);
   document.getElementById("quit").addEventListener("click", () => {
     const done = s.items.filter((it) => it.chosen !== null || it.timedOut).length;
-    if (done && !confirm("Arrêter la série ? Les réponses déjà données sont conservées dans ta progression.")) return;
+    if (done && !confirm(t("quiz.quitConfirm"))) return;
     stopTimer();
     if (done) {
       s.items = s.items.slice(0, done);
@@ -327,7 +334,7 @@ function renderQuestion() {
 }
 
 function nextLabel() {
-  return session.index + 1 < session.items.length ? "Question suivante" : "Voir le résultat";
+  return session.index + 1 < session.items.length ? t("quiz.next") : t("quiz.results");
 }
 
 function showCorrection(item, buttons) {
@@ -342,11 +349,11 @@ function showCorrection(item, buttons) {
   const feedback = document.getElementById("feedback");
   feedback.innerHTML = `
     <div class="card feedback ${ok ? "ok" : "ko"}">
-      <h3>${ok ? "Bonne réponse !" : item.timedOut ? "Temps écoulé" : "Mauvaise réponse"}</h3>
+      <h3>${ok ? t("quiz.right") : item.timedOut ? t("quiz.timeUp") : t("quiz.wrong")}</h3>
       ${ok ? `<details class="why">
-        <summary>Voir l’explication</summary>
+        <summary>${t("quiz.showWhy")}</summary>
         ${explanation}
-      </details>` : `<p>Réponse attendue : <strong>${esc(item.q.a)}</strong></p>${explanation}`}
+      </details>` : `<p>${t("quiz.expected")} <strong>${esc(item.q.a)}</strong></p>${explanation}`}
     </div>`;
   bindRefButtons(feedback);
   // Fait apparaître la correction au-dessus de la barre d'actions collée en bas.
@@ -368,7 +375,7 @@ function startTimer(item, buttons, next) {
   const deadline = Date.now() + EXAM.seconds * 1000;
   const tick = () => {
     const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-    el.textContent = `⏱ ${left} s`;
+    el.textContent = t("quiz.timer", { left });
     el.classList.toggle("low", left <= 5);
     if (left > 0) return;
     stopTimer();
@@ -396,7 +403,7 @@ function endSession() {
 
 function viewResults() {
   if (!session || !session.finished) return go("#/");
-  setTitle("Résultats");
+  setTitle(t("results.title"));
   const s = session;
   const total = s.items.length;
   const pts = score(s);
@@ -407,22 +414,22 @@ function viewResults() {
     <div class="quiz">
       <div class="card score-box ${passed ? "pass" : "fail"}">
         <div class="big">${pts}/${total}</div>
-        <p class="verdict">${exam ? (passed ? "Examen réussi 🎉" : "Examen non réussi") : passed ? "Excellent !" : pts / total >= 0.6 ? "Pas mal, continue !" : "À retravailler"}</p>
-        <p class="muted">${exam ? `Il fallait ${EXAM.pass}/${EXAM.size} pour réussir.` : `${Math.round((pts / total) * 100)} % de bonnes réponses.`}</p>
+        <p class="verdict">${exam ? (passed ? t("results.examPassed") : t("results.examFailed")) : passed ? t("results.great") : pts / total >= 0.6 ? t("results.ok") : t("results.bad")}</p>
+        <p class="muted">${exam ? t("results.needed", EXAM) : t("results.rate", { pct: Math.round((pts / total) * 100) })}</p>
         <div class="btn-row" style="justify-content:center">
-          <a class="btn primary" href="${exam ? "#/quiz?mode=exam" : "#/quiz?mode=train&n=20"}">${exam ? "Nouvel examen" : "Nouvelle série"}</a>
-          ${wrongIds ? `<a class="btn" href="#/quiz?mode=review">Revoir mes erreurs</a>` : ""}
-          <a class="btn ghost" href="#/">Accueil</a>
+          <a class="btn primary" href="${exam ? "#/quiz?mode=exam" : "#/quiz?mode=train&n=20"}">${exam ? t("results.newExam") : t("results.newSeries")}</a>
+          ${wrongIds ? `<a class="btn" href="#/quiz?mode=review">${t("results.reviewMistakes")}</a>` : ""}
+          <a class="btn ghost" href="#/">${t("results.home")}</a>
         </div>
       </div>
-      <h2>Correction</h2>
+      <h2>${t("results.correction")}</h2>
       <ol class="review-list">
         ${s.items.map((it, i) => {
           const ok = isRight(it);
-          const mine = it.chosen === null ? "Pas de réponse (temps écoulé)" : it.choices[it.chosen];
+          const mine = it.chosen === null ? t("results.noAnswer") : it.choices[it.chosen];
           return `<li class="card review-item ${ok ? "ok" : "ko"}">
             <p class="q">${i + 1}. ${esc(it.q.q)}</p>
-            ${ok ? `<p class="ans-ok">✓ ${esc(it.q.a)}</p>` : `<p class="ans-ko">✗ Ta réponse : ${esc(mine)}</p><p class="ans-ok">✓ ${esc(it.q.a)}</p>`}
+            ${ok ? `<p class="ans-ok">✓ ${esc(it.q.a)}</p>` : `<p class="ans-ko">✗ ${t("results.yourAnswer")} ${esc(mine)}</p><p class="ans-ok">✓ ${esc(it.q.a)}</p>`}
             <p class="muted small">${esc(it.q.why)}</p>
             ${refButton(it.q.ref)}
           </li>`;
@@ -436,26 +443,26 @@ function viewResults() {
 // ---------- Révisions ----------
 
 function viewReview() {
-  setTitle("Révisions");
+  setTitle(t("review.pageTitle"));
   const bank = getBank();
   const ids = new Set(store.toReview());
   const list = bank.questions.filter((q) => ids.has(q.id));
   app.innerHTML = `
-    <h1>Mes erreurs</h1>
-    <p class="lead">Les questions auxquelles tu as mal répondu la dernière fois. Une question disparaît de cette liste dès que tu y réponds correctement.</p>
+    <h1>${t("review.title")}</h1>
+    <p class="lead">${t("review.lead")}</p>
     ${list.length ? `
-      <div class="btn-row"><a class="btn primary" href="#/quiz?mode=review">Revoir ${plural(list.length, "question", "questions")}</a></div>
-      <h2>À revoir</h2>
+      <div class="btn-row"><a class="btn primary" href="#/quiz?mode=review">${t("review.start", { n: list.length })}</a></div>
+      <h2>${t("review.todo")}</h2>
       <ul class="review-list">
         ${list.map((q) => `<li class="card review-item ko"><p class="q">${esc(q.q)}</p>${refButton(q.ref)}</li>`).join("")}
-      </ul>` : `<div class="card"><p>Aucune erreur à revoir. Lance une <a href="#/quiz?mode=train&n=20">série rapide</a> !</p></div>`}
-    <h2>Progression</h2>
+      </ul>` : `<div class="card"><p>${t("review.empty")}</p></div>`}
+    <h2>${t("review.progress")}</h2>
     <div class="theme-list">${themeRows()}</div>
-    <div class="btn-row"><button class="btn ghost" type="button" id="reset">Effacer ma progression</button></div>
-    <p class="muted small">Ta progression est enregistrée uniquement dans ce navigateur.</p>`;
+    <div class="btn-row"><button class="btn ghost" type="button" id="reset">${t("review.reset")}</button></div>
+    <p class="muted small">${t("review.local")}</p>`;
   bindRefButtons(app);
   document.getElementById("reset").addEventListener("click", () => {
-    if (confirm("Effacer toute ta progression et tes erreurs enregistrées ?")) {
+    if (confirm(t("review.resetConfirm"))) {
       store.reset();
       viewReview();
     }
@@ -480,13 +487,13 @@ function tocHtml(activeChapter) {
 }
 
 function backToQuiz() {
-  return session && !session.finished ? `<div class="btn-row" style="margin-top:0;margin-bottom:12px"><a class="btn" href="#/quiz">↩ Revenir au quiz</a></div>` : "";
+  return session && !session.finished ? `<div class="btn-row" style="margin-top:0;margin-bottom:12px"><a class="btn" href="#/quiz">${t("rules.backToQuiz")}</a></div>` : "";
 }
 
 function searchBar(value = "") {
   return `<form class="searchbar" role="search" id="rules-search">
-      <input type="search" id="rules-q" value="${esc(value)}" placeholder="Mot-clé ou numéro (ex. : apex, 2.2.4, C4.3.D)" aria-label="Rechercher dans les règles" autocomplete="off">
-      <button class="btn primary" type="submit">Chercher</button>
+      <input type="search" id="rules-q" value="${esc(value)}" placeholder="${t("rules.searchPlaceholder")}" aria-label="${t("search.label")}" autocomplete="off">
+      <button class="btn primary" type="submit">${t("search.submit")}</button>
     </form>`;
 }
 
@@ -503,7 +510,7 @@ function viewRules(parts, params) {
   const id = parts[0];
   const q = params.get("q");
   if (id) return showRule(id, params.get("hl"));
-  setTitle("Règles");
+  setTitle(t("rules.title"));
   renderedChapter = null;
   const rules = getRules();
   if (q) {
@@ -511,10 +518,10 @@ function viewRules(parts, params) {
     const hits = search(q);
     app.innerHTML = `
       ${backToQuiz()}
-      <h1>Recherche</h1>
+      <h1>${t("rules.searchTitle")}</h1>
       ${searchBar(q)}
-      ${direct ? `<div class="btn-row" style="margin-top:0"><a class="btn primary" href="#/regles/${esc(direct)}">Aller à ${esc(refLabel(direct))}</a></div>` : ""}
-      <p class="muted">${hits.length ? `${plural(hits.length, "résultat", "résultats")}${hits.length >= 60 ? " (les 60 premiers)" : ""} pour « ${esc(q)} »` : `Aucun résultat pour « ${esc(q)} ».`}</p>
+      ${direct ? `<div class="btn-row" style="margin-top:0"><a class="btn primary" href="#/regles/${esc(direct)}">${t("rules.goTo", { label: esc(refLabel(direct)) })}</a></div>` : ""}
+      <p class="muted">${hits.length ? t("rules.hits", { n: hits.length, q: esc(q) }) : t("rules.noHits", { q: esc(q) })}</p>
       <ul class="results">
         ${hits.map((h) => `<li class="result"><a class="card" href="#/regles/${esc(h.anchor)}?hl=${encodeURIComponent(h.words.join(" "))}">
             <div class="where">${esc(h.where)}</div><p class="snip">${h.html}</p></a></li>`).join("")}
@@ -525,12 +532,13 @@ function viewRules(parts, params) {
   }
   app.innerHTML = `
     ${backToQuiz()}
-    <h1>Les règles</h1>
-    <p class="lead">${esc(rules.title)} — version ${esc(rules.version)}, traduction française officielle de la WFTDA, avec le glossaire et le livret de mises en situations.</p>
+    <h1>${t("rules.heading")}</h1>
+    <p class="lead">${t("rules.lead", { title: esc(rules.title.trim()), version: esc(rules.version) })}</p>
     ${searchBar()}
     <div class="grid">
       ${PARTS.map((part) => {
         const chapters = rules.chapters.filter((c) => c.part === part.id);
+        if (!chapters.length) return "";
         return `<div class="card"><h3 style="margin-top:0">${esc(part.label)}</h3>${chapters.map((c) =>
           `<p style="margin:6px 0"><a href="#/regles/${esc(c.id)}">${esc(part.id === "casebook" ? `${c.num}. ${c.title}` : chapterLabel(c))}</a></p>`).join("")}</div>`;
       }).join("")}
@@ -542,7 +550,7 @@ function viewRules(parts, params) {
 function showRule(id, hl) {
   const target = resolve(id);
   if (!target) {
-    app.innerHTML = `<h1>Règle introuvable</h1><p>La référence « ${esc(id)} » n’existe pas.</p><a class="btn" href="#/regles">Retour aux règles</a>`;
+    app.innerHTML = `<h1>${t("rules.notFound")}</h1><p>${t("rules.notFoundText", { id: esc(id) })}</p><a class="btn" href="#/regles">${t("rules.back")}</a>`;
     return;
   }
   const chapter = target.chapter;
@@ -555,16 +563,16 @@ function showRule(id, hl) {
     app.innerHTML = `
       ${backToQuiz()}
       ${searchBar()}
-      <button class="btn toc-toggle" type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">☰ Sommaire</button>
+      <button class="btn toc-toggle" type="button" id="toc-toggle" aria-expanded="false" aria-controls="toc">${t("rules.toc")}</button>
       <div class="rules-layout">
-        <nav class="card toc" id="toc" aria-label="Sommaire des règles">${tocHtml(chapter)}</nav>
+        <nav class="card toc" id="toc" aria-label="${t("rules.tocLabel")}">${tocHtml(chapter)}</nav>
         <article class="rules-text" id="chapter">
           ${renderChapter(chapter)}
           <div class="chap-nav">
             ${prev ? `<a class="btn" href="#/regles/${esc(prev.id)}">← ${esc(chapterLabel(prev))}</a>` : "<span></span>"}
             ${next ? `<a class="btn" href="#/regles/${esc(next.id)}">${esc(chapterLabel(next))} →</a>` : "<span></span>"}
           </div>
-          <p class="source-note">${esc(getRules().copyright)} · Texte reproduit depuis la <a href="${esc(getRules().source)}" target="_blank" rel="noopener">version PDF officielle</a> (page ${chapter.page} et suivantes).${feminineNote()}</p>
+          <p class="source-note">${t("rules.source", { copyright: esc(getRules().copyright), url: esc(getRules().source), page: chapter.page })}${feminineNote()}</p>
         </article>
       </div>`;
     bindSearch();
@@ -597,13 +605,13 @@ function highlight(root, words) {
     const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
     const texts = [];
     while (walker.nextNode()) texts.push(walker.currentNode);
-    for (const t of texts) {
-      const n = norm(t.data);
-      if (n.length !== t.data.length) continue; // évite un décalage dû aux caractères normalisés
+    for (const text of texts) {
+      const n = norm(text.data);
+      if (n.length !== text.data.length) continue; // évite un décalage dû aux caractères normalisés
       const hit = terms.map((w) => n.indexOf(w)).find((i) => i >= 0);
       if (hit === undefined) continue;
       const w = terms.find((x) => n.indexOf(x) === hit);
-      const after = t.splitText(hit);
+      const after = text.splitText(hit);
       after.splitText(w.length);
       const mark = document.createElement("mark");
       after.parentNode.replaceChild(mark, after);
@@ -619,7 +627,7 @@ function openSheet(ref) {
   const frag = renderFragment(ref);
   document.getElementById("sheet-title").textContent = frag.title;
   document.getElementById("sheet-body").innerHTML = `${frag.html}
-    <div class="btn-row"><a class="btn" href="#/regles/${esc(ref)}">Ouvrir dans les règles</a></div>`;
+    <div class="btn-row"><a class="btn" href="#/regles/${esc(ref)}">${t("rules.openFull")}</a></div>`;
   sheet.hidden = false;
   sheet.dataset.returnFocus = document.activeElement?.dataset?.ref ?? "";
   sheet.querySelector(".sheet-head [data-close]").focus();
@@ -642,7 +650,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 function feminineNote() {
-  return prefs.get("ecriture") === prefs.ECRITURES.feminin
+  return getLang() === "fr" && prefs.get("ecriture") === prefs.ECRITURES.feminin
     ? ` Affiché ici tout au féminin pour faciliter la lecture ; la version officielle est en écriture inclusive (<a href="#/reglages">réglages</a>).`
     : "";
 }
@@ -665,11 +673,12 @@ const ECRITURE_CHOICES = [
 const ECRITURE_EXAMPLE = "Le·la Jammeur·se est envoyé·e en Penalty Box : ielle doit s’asseoir avant que son·sa coéquipier·ère ne reprenne l’Étoile.";
 
 function viewSettings() {
-  setTitle("Réglages");
+  setTitle(t("settings.title"));
   const current = prefs.get("ecriture");
   app.innerHTML = `
-    <h1>Réglages</h1>
-    <form class="card" id="settings-form">
+    <h1>${t("settings.title")}</h1>
+    ${getLang() === "fr" ? "" : `<p class="muted">${t("settings.frOnly")}</p>`}
+    <form class="card" id="settings-form" lang="fr">
       <fieldset>
         <legend>Écriture</legend>
         <div class="options">
@@ -703,32 +712,53 @@ function viewSettings() {
 // ---------- À propos ----------
 
 function viewAbout() {
-  setTitle("À propos");
+  setTitle(t("about.title"));
   const rules = getRules();
   app.innerHTML = `
-    <h1>À propos de RookieRules</h1>
-    <div class="card rules-text">
-      <p>RookieRules aide les rookies (et les autres !) à apprendre les règles du roller derby sur piste plate, à la manière d’un entraînement au code de la route. L’application fonctionne hors ligne une fois chargée et enregistre ta progression uniquement dans ton navigateur.</p>
-      <h3 class="sec">Droits et crédits</h3>
-      <p><strong>Règles :</strong> « ${esc(rules.title)} » (${esc(rules.version)}), traduction française officielle. ${esc(rules.copyright)}. Le texte des règles, du glossaire et du livret de mises en situations ainsi que les schémas sont reproduits depuis le document publié par la WFTDA :
-        <a href="${esc(rules.source)}" target="_blank" rel="noopener">${esc(rules.source)}</a>. Version en ligne : <a href="https://rules.wftda.org/" target="_blank" rel="noopener">rules.wftda.org</a>.</p>
-      <p><strong>Schéma du Track :</strong> design © 2002 Electra Blu/Amy Sherman, Texas Rollergirls, utilisé dans les règles avec leur permission.</p>
-      <p><strong>Traduction :</strong> équipe bénévole de traduction des règles de la WFTDA en français (voir la note sur <a href="#/regles/ecriture-inclusive">l’écriture inclusive</a>).</p>
-      <p><strong>Questions :</strong> les questions et explications ont été rédigées pour RookieRules à partir des règles. Elles ne sont pas officielles et peuvent contenir des erreurs : chaque question renvoie à la règle correspondante, qui fait foi.</p>
-      <p>RookieRules n’est ni affilié à la WFTDA, ni approuvé par elle. En cas de doute ou de divergence, seule la version officielle des règles s’applique.</p>
-      <h3 class="sec">Signaler une erreur</h3>
-      <p>Une question te semble fausse ou ambiguë ? Ouvre un ticket sur <a href="https://github.com/Helvor/RookieRules/issues" target="_blank" rel="noopener">GitHub</a> en indiquant son numéro de règle.</p>
-    </div>`;
+    <h1>${t("about.heading")}</h1>
+    <div class="card rules-text">${t("about.body", {
+      title: esc(rules.title.trim()), version: esc(rules.version), copyright: esc(rules.copyright), source: esc(rules.source),
+    })}</div>`;
   focusMain();
 }
+
+// ---------- Langue ----------
+
+function updateLangButton() {
+  const btn = document.getElementById("lang-btn");
+  btn.lang = getLang() === "fr" ? "en" : "fr";
+}
+
+async function switchLang() {
+  const previous = getLang();
+  setLang(previous === "fr" ? "en" : "fr");
+  try {
+    await Promise.all([loadRules(), loadQuestions()]);
+  } catch (err) {
+    console.error(err);
+    setLang(previous); // hors ligne et fichiers pas encore en cache : on garde la langue actuelle
+    await Promise.all([loadRules(), loadQuestions()]); // déjà en mémoire
+    alert(t("error.text"));
+    return;
+  }
+  translateSession(session);
+  translatePage();
+  updateLangButton();
+  renderedChapter = null;
+  route();
+}
+
+document.getElementById("lang-btn").addEventListener("click", switchLang);
 
 // ---------- Démarrage ----------
 
 async function boot() {
+  translatePage();
+  updateLangButton();
   try {
     await Promise.all([loadRules(), loadQuestions()]);
   } catch (err) {
-    app.innerHTML = `<h1>Oups</h1><p>Impossible de charger les données. Vérifie ta connexion puis recharge la page.</p>`;
+    app.innerHTML = `<h1>${t("error.title")}</h1><p>${t("error.text")}</p>`;
     console.error(err);
     return;
   }

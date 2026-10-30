@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>RookieRules</title>
-  <meta name="description" content="Révise les règles du roller derby (WFTDA, version française) avec des séries de questions, un examen blanc et les règles complètes consultables hors ligne.">
+  <meta name="description" data-i18n-attr="content:meta.description" content="Révise les règles du roller derby (WFTDA, version française) avec des séries de questions, un examen blanc et les règles complètes consultables hors ligne.">
   <meta name="theme-color" content="#b0246a">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
@@ -13,20 +13,21 @@
   <script type="module" src="assets/js/app.js"></script>
 </head>
 <body>
-  <a class="skip" href="#app">Aller au contenu</a>
+  <a class="skip" href="#app" data-i18n="skip">Aller au contenu</a>
   <header class="topbar">
-    <a class="brand" href="#/" aria-label="RookieRules, accueil">
+    <a class="brand" href="#/" aria-label="RookieRules, accueil" data-i18n-attr="aria-label:brand.label">
       <img src="assets/icons/favicon.svg" alt="" width="28" height="28">
       <span>Rookie<strong>Rules</strong></span>
     </a>
-    <nav class="mainnav" aria-label="Navigation principale">
-      <a href="#/" data-nav="home"><span class="ni" aria-hidden="true">🏠</span><span>Accueil</span></a>
-      <a href="#/entrainement" data-nav="train"><span class="ni" aria-hidden="true">🎯</span><span>Entraînement</span></a>
-      <a href="#/examen" data-nav="exam"><span class="ni" aria-hidden="true">⏱️</span><span>Examen</span></a>
-      <a href="#/regles" data-nav="rules"><span class="ni" aria-hidden="true">📖</span><span>Règles</span></a>
-      <a href="#/revisions" data-nav="review"><span class="ni" aria-hidden="true">🔁</span><span>Révisions</span></a>
+    <nav class="mainnav" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.label">
+      <a href="#/" data-nav="home"><span class="ni" aria-hidden="true">🏠</span><span data-i18n="nav.home">Accueil</span></a>
+      <a href="#/entrainement" data-nav="train"><span class="ni" aria-hidden="true">🎯</span><span data-i18n="nav.train">Entraînement</span></a>
+      <a href="#/examen" data-nav="exam"><span class="ni" aria-hidden="true">⏱️</span><span data-i18n="nav.exam">Examen</span></a>
+      <a href="#/regles" data-nav="rules"><span class="ni" aria-hidden="true">📖</span><span data-i18n="nav.rules">Règles</span></a>
+      <a href="#/revisions" data-nav="review"><span class="ni" aria-hidden="true">🔁</span><span data-i18n="nav.review">Révisions</span></a>
     </nav>
-    <a class="icon-btn settings-link" href="#/reglages" data-nav="settings" aria-label="Réglages" title="Réglages">⚙️</a>
+    <button class="lang-btn" type="button" id="lang-btn" lang="en" data-i18n="lang.switch" data-i18n-attr="aria-label:lang.switchLabel" aria-label="Switch to English">English</button>
+    <a class="icon-btn settings-link" href="#/reglages" data-nav="settings" aria-label="Réglages" title="Réglages" data-i18n-attr="aria-label:settings.title;title:settings.title">⚙️</a>
   </header>
 
   <main id="app" tabindex="-1">
@@ -34,7 +35,7 @@
     <noscript><p class="loading">RookieRules a besoin de JavaScript pour fonctionner.</p></noscript>
   </main>
 
-  <footer class="footer">
+  <footer class="footer" data-i18n-html="footer">
     <p>Règles : « Les règles du Roller Derby sur piste plate » (janvier 2025), traduction française ©2025 Women’s Flat Track Derby Association (WFTDA).
       <a href="https://static.wftda.com/rules/wftda-rules-french.pdf" rel="noopener" target="_blank">Source officielle</a>.</p>
     <p>Outil d’apprentissage non officiel, non affilié à la WFTDA. En cas de doute, seule la version officielle fait foi. <a href="#/a-propos">À propos et crédits</a> · <a href="#/reglages">Réglages (écriture inclusive ou tout au féminin)</a></p>
@@ -44,8 +45,8 @@
     <div class="sheet-backdrop" data-close></div>
     <section class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
       <header class="sheet-head">
-        <h2 id="sheet-title">Règle</h2>
-        <button class="icon-btn" type="button" data-close aria-label="Fermer">✕</button>
+        <h2 id="sheet-title" data-i18n="sheet.title">Règle</h2>
+        <button class="icon-btn" type="button" data-close aria-label="Fermer" data-i18n-attr="aria-label:close">✕</button>
       </header>
       <div class="sheet-body rules-text" id="sheet-body"></div>
     </section>

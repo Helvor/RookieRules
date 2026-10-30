@@ -1,5 +1,6 @@
 // Préférences d'affichage, enregistrées dans le navigateur (séparément de la progression).
 import { adaptData, feminize } from "./ecriture.js";
+import { getLang } from "./i18n.js";
 
 const KEY = "rookierules:prefs";
 
@@ -34,12 +35,17 @@ export function set(name, value) {
   }
 }
 
-// Texte rédigé en écriture inclusive, adapté à la forme choisie.
-export function w(text) {
-  return prefs.ecriture === ECRITURES.feminin ? feminize(text) : text;
+// La conversion ne concerne que les textes en français.
+function feminin() {
+  return prefs.ecriture === ECRITURES.feminin && getLang() === "fr";
 }
 
-// Même chose pour des données chargées (questions, règles).
+// Texte rédigé en écriture inclusive, adapté à la forme choisie.
+export function w(text) {
+  return feminin() ? feminize(text) : text;
+}
+
+// Même chose pour des données chargées (questions, règles) dans la langue courante.
 export function adapt(data) {
-  return prefs.ecriture === ECRITURES.feminin ? adaptData(data, feminize) : data;
+  return feminin() ? adaptData(data, feminize) : data;
 }
