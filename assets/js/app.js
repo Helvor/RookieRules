@@ -81,22 +81,18 @@ function viewHome() {
     </section>
     <div class="grid">
       <a class="card mode-card featured" href="#/quiz?mode=train&n=20">
-        <span class="num" aria-hidden="true">01</span>
         <h3>${t("home.quick")}</h3>
         <p>${t("home.quickText")}</p>
       </a>
       <a class="card mode-card" href="#/examen">
-        <span class="num" aria-hidden="true">02</span>
         <h3>${t("home.exam")}</h3>
         <p>${t("home.examText", EXAM)}</p>
       </a>
       <a class="card mode-card" href="#/entrainement">
-        <span class="num" aria-hidden="true">03</span>
         <h3>${t("home.themes")}</h3>
         <p>${t("home.themesText")}</p>
       </a>
       <a class="card mode-card" href="#/revisions">
-        <span class="num" aria-hidden="true">04</span>
         <h3>${t("home.mistakes")}</h3>
         <p>${review ? t("home.mistakesCount", { n: review }) : t("home.noMistakes")}</p>
       </a>

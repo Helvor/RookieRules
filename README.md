@@ -95,4 +95,4 @@ Le texte des règles et les schémas sont © 2025 Women's Flat Track Derby Assoc
 
 Track Rules est un outil d'entraînement non officiel, sans lien avec la WFTDA. Les questions ne sont pas officielles : en cas de doute, le texte des règles fait foi.
 
-Polices embarquées (dans `assets/fonts/`, pour fonctionner hors ligne) : [Archivo](https://github.com/Omnibus-Type/Archivo) pour les titres et [Atkinson Hyperlegible Next](https://github.com/googlefonts/atkinson-hyperlegible-next) pour le texte, toutes deux sous licence SIL Open Font License 1.1 (voir `licenses/`).
+Polices embarquées (dans `assets/fonts/`, pour fonctionner hors ligne) : [Big Shoulders Display](https://github.com/xotypeco/big_shoulders) pour les titres et [Atkinson Hyperlegible Next](https://github.com/googlefonts/atkinson-hyperlegible-next) pour le texte, toutes deux sous licence SIL Open Font License 1.1 (voir `licenses/`).

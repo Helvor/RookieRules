@@ -1,6 +1,6 @@
 // Service worker : met l'application en cache pour l'utiliser hors ligne.
 // Les fichiers sont servis « réseau d'abord » : changer VERSION n'est utile que pour purger l'ancien cache.
-const VERSION = "trackrules-v5";
+const VERSION = "trackrules-v6";
 
 const PRECACHE = [
   "./",
@@ -19,7 +19,8 @@ const PRECACHE = [
   "data/questions.json",
   "data/rules.en.json",
   "data/questions.en.json",
-  "assets/fonts/archivo-wdth.woff2",
+  "assets/fonts/big-shoulders-700.woff2",
+  "assets/fonts/big-shoulders-800.woff2",
   "assets/fonts/atkinson-400.woff2",
   "assets/fonts/atkinson-400-italic.woff2",
   "assets/fonts/atkinson-700.woff2",
