@@ -1,6 +1,6 @@
 // Track Rules : routeur et vues de l'application.
 import { esc, norm, parseHash } from "./util.js";
-import { feminize } from "./ecriture.js";
+import { feminize, masculinize } from "./ecriture.js";
 import * as store from "./store.js";
 import * as prefs from "./prefs.js";
 import { getLang, setLang, t, translatePage } from "./i18n.js";
@@ -644,9 +644,10 @@ document.addEventListener("keydown", (e) => {
 });
 
 function feminineNote() {
-  return getLang() === "fr" && prefs.get("ecriture") === prefs.ECRITURES.feminin
-    ? ` Affiché ici tout au féminin pour faciliter la lecture ; la version officielle est en écriture inclusive (<a href="#/reglages">réglages</a>).`
-    : "";
+  const ecriture = prefs.get("ecriture");
+  if (!prefs.converter()) return "";
+  const label = ecriture === prefs.ECRITURES.masculin ? "tout au masculin" : "tout au féminin";
+  return ` Affiché ici ${label} pour faciliter la lecture ; la version officielle est en écriture inclusive (<a href="#/reglages">réglages</a>).`;
 }
 
 // ---------- Réglages ----------
@@ -661,6 +662,11 @@ const ECRITURE_CHOICES = [
     id: prefs.ECRITURES.feminin,
     label: "Tout au féminin",
     hint: "Lecture facilitée (dys-friendly) : sans point médian, tous les rôles et accords au féminin. Plus confortable avec une dyslexie ou un lecteur d’écran. Le sens des règles ne change pas.",
+  },
+  {
+    id: prefs.ECRITURES.masculin,
+    label: "Tout au masculin",
+    hint: "Lecture facilitée (dys-friendly) : sans point médian, tous les rôles et accords au masculin. Le sens des règles ne change pas.",
   },
 ];
 
@@ -689,7 +695,8 @@ function viewSettings() {
   const example = document.getElementById("ecriture-example");
   const preview = () => {
     const choice = form.querySelector("input[name=ecriture]:checked").value;
-    example.textContent = choice === prefs.ECRITURES.feminin ? feminize(ECRITURE_EXAMPLE) : ECRITURE_EXAMPLE;
+    const convert = { [prefs.ECRITURES.feminin]: feminize, [prefs.ECRITURES.masculin]: masculinize }[choice];
+    example.textContent = convert ? convert(ECRITURE_EXAMPLE) : ECRITURE_EXAMPLE;
   };
   form.addEventListener("change", () => {
     const choice = form.querySelector("input[name=ecriture]:checked").value;

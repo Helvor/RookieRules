@@ -64,7 +64,7 @@ const STRINGS = {
     "loading": "Chargement…",
     "footer": `<p>Règles : « Les règles du Roller Derby sur piste plate » (janvier 2025), traduction française ©2025 Women’s Flat Track Derby Association (WFTDA).
       <a href="https://static.wftda.com/rules/wftda-rules-french.pdf" rel="noopener" target="_blank">Source officielle</a>.</p>
-    <p>Outil d’apprentissage non officiel, non affilié à la WFTDA. En cas de doute, seule la version officielle fait foi. <a href="#/a-propos">À propos et crédits</a> · <a href="#/reglages">Réglages (écriture inclusive ou tout au féminin)</a></p>`,
+    <p>Outil d’apprentissage non officiel, non affilié à la WFTDA. En cas de doute, seule la version officielle fait foi. <a href="#/a-propos">À propos et crédits</a> · <a href="#/reglages">Réglages (écriture inclusive, tout au féminin ou tout au masculin)</a></p>`,
     "sheet.title": "Règle",
     "close": "Fermer",
 

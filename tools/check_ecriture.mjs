@@ -1,8 +1,8 @@
-// Vérifie la conversion « tout au féminin » sur toutes les données :
+// Vérifie les conversions « tout au féminin » et « tout au masculin » sur toutes les données :
 // plus aucun point médian ni « ielle », et les réponses restent distinctes.
 // Usage : node tools/check_ecriture.mjs [--list]  (--list affiche chaque forme convertie)
 import { readFileSync } from "node:fs";
-import { adaptData, feminize } from "../assets/js/ecriture.js";
+import { adaptData, feminize, masculinize } from "../assets/js/ecriture.js";
 
 const root = new URL("../", import.meta.url);
 const read = (p) => JSON.parse(readFileSync(new URL(p, root), "utf8"));
@@ -11,22 +11,24 @@ const forms = new Map();
 
 function collect(text) {
   for (const m of text.matchAll(/[\p{L}’']*[·⋅][\p{L}·⋅]*/gu)) {
-    if (!forms.has(m[0])) forms.set(m[0], feminize(m[0]));
+    if (!forms.has(m[0])) forms.set(m[0], `${feminize(m[0])} / ${masculinize(m[0])}`);
   }
 }
 
 for (const file of ["data/questions.json", "data/rules.json"]) {
   const raw = read(file);
   adaptData(raw, (s) => { collect(s); return s; });
-  const out = adaptData(raw, feminize);
-  adaptData(out, (s) => {
-    if (/[·⋅]/.test(s)) errors.push(`${file} : point médian restant dans « ${s.slice(0, 120)} »`);
-    if (/(?<!\p{L})iel/iu.test(s)) errors.push(`${file} : « iel » restant dans « ${s.slice(0, 120)} »`);
-    return s;
-  });
-  if (out.questions) {
-    for (const q of out.questions) {
-      if (new Set([q.a, ...q.w]).size !== 4) errors.push(`${q.id} : réponses identiques une fois au féminin`);
+  for (const [label, convert] of [["féminin", feminize], ["masculin", masculinize]]) {
+    const out = adaptData(raw, convert);
+    adaptData(out, (s) => {
+      if (/[·⋅]/.test(s)) errors.push(`${file} (${label}) : point médian restant dans « ${s.slice(0, 120)} »`);
+      if (/(?<!\p{L})iel/iu.test(s)) errors.push(`${file} (${label}) : « iel » restant dans « ${s.slice(0, 120)} »`);
+      return s;
+    });
+    if (out.questions) {
+      for (const q of out.questions) {
+        if (new Set([q.a, ...q.w]).size !== 4) errors.push(`${q.id} : réponses identiques une fois au ${label}`);
+      }
     }
   }
 }
