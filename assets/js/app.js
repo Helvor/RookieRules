@@ -1,4 +1,4 @@
-// RookieRules : routeur et vues de l'application.
+// Track Rules : routeur et vues de l'application.
 import { esc, norm, parseHash } from "./util.js";
 import { feminize } from "./ecriture.js";
 import * as store from "./store.js";
@@ -55,7 +55,7 @@ function go(hash) {
 }
 
 function setTitle(title) {
-  document.title = title ? `${title} · RookieRules` : "RookieRules";
+  document.title = title ? `${title} · Track Rules` : "Track Rules";
 }
 
 function focusMain() {
@@ -74,35 +74,29 @@ function viewHome() {
     <section class="hero">
       <h1>${t("home.title")}</h1>
       <p class="lead">${t("home.lead")}</p>
+      <form class="search-hero" role="search" id="home-search">
+        <input id="home-q" type="search" aria-label="${t("search.label")}" placeholder="${t("home.searchPlaceholder")}" autocomplete="off">
+        <button class="btn primary" type="submit">${t("search.submit")}</button>
+      </form>
     </section>
     <div class="grid">
       <a class="card mode-card featured" href="#/quiz?mode=train&n=20">
-        <span class="emoji" aria-hidden="true">🎲</span>
         <h3>${t("home.quick")}</h3>
         <p>${t("home.quickText")}</p>
       </a>
       <a class="card mode-card" href="#/examen">
-        <span class="emoji" aria-hidden="true">⏱️</span>
         <h3>${t("home.exam")}</h3>
         <p>${t("home.examText", EXAM)}</p>
       </a>
       <a class="card mode-card" href="#/entrainement">
-        <span class="emoji" aria-hidden="true">🎯</span>
         <h3>${t("home.themes")}</h3>
         <p>${t("home.themesText")}</p>
       </a>
       <a class="card mode-card" href="#/revisions">
-        <span class="emoji" aria-hidden="true">🔁</span>
         <h3>${t("home.mistakes")}</h3>
         <p>${review ? t("home.mistakesCount", { n: review }) : t("home.noMistakes")}</p>
       </a>
     </div>
-
-    <h2>${t("home.search")}</h2>
-    <form class="search-hero" role="search" id="home-search">
-      <input id="home-q" type="search" aria-label="${t("search.label")}" placeholder="${t("home.searchPlaceholder")}" autocomplete="off">
-      <button class="btn primary" type="submit">${t("search.submit")}</button>
-    </form>
 
     <h2>${t("home.progress")}</h2>
     <div class="card stats">
@@ -133,7 +127,7 @@ function themeRows() {
     const rate = store.themeRate(qs);
     const pct = rate === null ? 0 : Math.round(rate * 100);
     return `<a class="card theme-row" href="#/quiz?mode=train&themes=${theme.id}&n=10">
-      <span class="t">${theme.icon} ${esc(theme.label)}</span>
+      <span class="t">${esc(theme.label)}</span>
       <span class="muted small">${t("themes.count", { n: qs.length })}${rate === null ? "" : ` · ${percent(pct)}`}</span>
       <span class="bar" aria-hidden="true"><i style="width:${pct}%"></i></span>
     </a>`;
@@ -152,7 +146,7 @@ function viewTrainSetup() {
       <fieldset>
         <legend>${t("train.themes")}</legend>
         <div class="chips">
-          ${bank.themes.map((theme) => `<label class="chip"><input type="checkbox" name="theme" value="${theme.id}" checked><span>${theme.icon} ${esc(theme.label)}</span></label>`).join("")}
+          ${bank.themes.map((theme) => `<label class="chip"><input type="checkbox" name="theme" value="${theme.id}" checked><span>${esc(theme.label)}</span></label>`).join("")}
         </div>
         <div class="btn-row"><button class="btn ghost" type="button" id="all-themes">${t("train.all")}</button><button class="btn ghost" type="button" id="no-themes">${t("train.none")}</button></div>
       </fieldset>
@@ -255,7 +249,7 @@ function renderQuestion() {
     <div class="quiz">
       <div class="quiz-top">
         <span class="count">${t("quiz.count", { i: s.index + 1, total })}</span>
-        <span class="badge">${theme.icon} ${esc(theme.label)}</span>
+        <span class="badge">${esc(theme.label)}</span>
         <span class="grow"></span>
         ${exam ? `<span class="timer" id="timer" aria-live="off"></span>` : `<span class="badge accent">${score(s)} ✓</span>`}
       </div>
@@ -362,7 +356,7 @@ function showCorrection(item, buttons) {
 }
 
 function refButton(ref) {
-  return `<button class="ref-link" type="button" data-ref="${esc(ref)}">📖 ${esc(refLabel(ref))}</button>`;
+  return `<button class="ref-link" type="button" data-ref="${esc(ref)}">${esc(refLabel(ref))} →</button>`;
 }
 
 function bindRefButtons(root) {

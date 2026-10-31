@@ -1,4 +1,4 @@
-# RookieRules
+# Track Rules
 
 Application web pour réviser les règles du roller derby (WFTDA, version de janvier 2025), sur le principe du « code de la route » : séries de questions aléatoires, examen blanc chronométré et texte intégral des règles consultable et recherchable. Disponible en français et en anglais.
 
@@ -93,4 +93,6 @@ Le script régénère `data/rules.en.json` et télécharge les schémas officiel
 
 Le texte des règles et les schémas sont © 2025 Women's Flat Track Derby Association (WFTDA), traduction réalisée par l'équipe bénévole de traduction de la WFTDA. Schéma de la piste © 2002 Electra Blu / Amy Sherman, Texas Rollergirls. Sources officielles : https://static.wftda.com/rules/wftda-rules-french.pdf (français) et https://rules.wftda.com (anglais).
 
-RookieRules est un outil d'entraînement non officiel, sans lien avec la WFTDA. Les questions ne sont pas officielles : en cas de doute, le texte des règles fait foi.
+Track Rules est un outil d'entraînement non officiel, sans lien avec la WFTDA. Les questions ne sont pas officielles : en cas de doute, le texte des règles fait foi.
+
+Polices embarquées (dans `assets/fonts/`, pour fonctionner hors ligne) : [Big Shoulders Display](https://github.com/xotypeco/big_shoulders) pour les titres et [Atkinson Hyperlegible Next](https://github.com/googlefonts/atkinson-hyperlegible-next) pour le texte, toutes deux sous licence SIL Open Font License 1.1 (voir `licenses/`).

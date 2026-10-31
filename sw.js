@@ -1,6 +1,6 @@
 // Service worker : met l'application en cache pour l'utiliser hors ligne.
 // Les fichiers sont servis « réseau d'abord » : changer VERSION n'est utile que pour purger l'ancien cache.
-const VERSION = "rookierules-v3";
+const VERSION = "trackrules-v6";
 
 const PRECACHE = [
   "./",
@@ -19,6 +19,11 @@ const PRECACHE = [
   "data/questions.json",
   "data/rules.en.json",
   "data/questions.en.json",
+  "assets/fonts/big-shoulders-700.woff2",
+  "assets/fonts/big-shoulders-800.woff2",
+  "assets/fonts/atkinson-400.woff2",
+  "assets/fonts/atkinson-400-italic.woff2",
+  "assets/fonts/atkinson-700.woff2",
   "assets/icons/favicon.svg",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
