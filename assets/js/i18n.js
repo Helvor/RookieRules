@@ -199,7 +199,7 @@ const STRINGS = {
       <h3 class="sec">Langue</h3>
       <p>L’application existe aussi en anglais, avec le texte officiel des règles en anglais : bouton « English » en haut de la page.</p>
       <h3 class="sec">Signaler une erreur</h3>
-      <p>Une question te semble fausse ou ambiguë ? Ouvre un ticket sur <a href="https://github.com/Helvor/RookieRules/issues" target="_blank" rel="noopener">GitHub</a> en indiquant son numéro de règle.</p>`,
+      <p>Une question te semble fausse ou ambiguë ? Ouvre un ticket sur <a href="https://github.com/Helvor/TrackRules/issues" target="_blank" rel="noopener">GitHub</a> en indiquant son numéro de règle.</p>`,
 
     "error.title": "Oups",
     "error.text": "Impossible de charger les données. Vérifie ta connexion puis recharge la page.",
@@ -354,7 +354,7 @@ const STRINGS = {
       <h3 class="sec">Language</h3>
       <p>The app is also available in French, with the official French translation of the rules: use the “Français” button at the top of the page.</p>
       <h3 class="sec">Report a mistake</h3>
-      <p>Does a question look wrong or ambiguous? Open an issue on <a href="https://github.com/Helvor/RookieRules/issues" target="_blank" rel="noopener">GitHub</a> with its rule number.</p>`,
+      <p>Does a question look wrong or ambiguous? Open an issue on <a href="https://github.com/Helvor/TrackRules/issues" target="_blank" rel="noopener">GitHub</a> with its rule number.</p>`,
 
     "error.title": "Oops",
     "error.text": "Could not load the data. Check your connection, then reload the page.",
