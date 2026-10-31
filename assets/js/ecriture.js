@@ -1,6 +1,7 @@
 // Écriture : les textes sont rédigés en écriture inclusive (point médian, comme
-// la traduction française officielle des règles). L'option « tout au féminin »
-// les convertit pour faciliter la lecture (dyslexie, lecteurs d'écran…).
+// la traduction française officielle des règles). Les options « tout au féminin »
+// et « tout au masculin » les convertissent pour faciliter la lecture (dyslexie,
+// lecteurs d'écran…).
 // Ne concerne que le français.
 
 // Formes à réécrire telles quelles, avant le traitement mot par mot
@@ -10,6 +11,7 @@ const PHRASES = [
   [/(?<!\p{L})([Ss])[’']il[·⋅]si(?!\p{L})/gu, (m, s) => `${s}i`],
   [/(?<!\p{L})([Ss])[’']ielle(s?)(?!\p{L})/gu, (m, s, pl) => `${s}i elle${pl}`],
   [/(?<!\p{L})(?:([Dd])e )?([Ll])ui[·⋅]d(?=[’'])/gu, (m, d, l) => (/[DL]/.test(d || l) ? "D" : "d")],
+  [/(?<!\p{L})([Ll])e\.la (?=\p{L})/gu, (m, l) => (l === "L" ? "La " : "la ")],
 ];
 
 // Paires de mots entiers : forme masculine·forme féminine (ou l'inverse).
@@ -80,6 +82,54 @@ export function feminize(text) {
   out = out.replace(EPICENE, (m, before, noun) => `${keepCase(before, BEFORE[before.toLowerCase()])} ${noun}`);
   // Pronom neutre « ielle(s) »
   return out.replace(/(?<!\p{L})([Ii])elle(s?)(?!\p{L})/gu, (m, i, pl) => `${i === "I" ? "E" : "e"}lle${pl}`);
+}
+
+// ---------- Tout au masculin ----------
+
+const PHRASES_M = [
+  [/(?<!\p{L})([Àà]) la[·⋅]auquel[·⋅]le(?!\p{L})/gu, (m, a) => (a === "À" ? "Auquel" : "auquel")],
+  [/(?<!\p{L})([Ll])ui[·⋅]d[’']elle(?!\p{L})/gu, (m, l) => `${l}ui`],
+  [/(?<!\p{L})([Ss])[’']ielle(s?)(?!\p{L})/gu, (m, s, pl) => `${s}’il${pl}`],
+  [/(?<!\p{L})([Ss])i (?:ielle|elle[·⋅]il)(s?)(?!\p{L})/gu, (m, s, pl) => `${s}’il${pl}`],
+  [/(?<!\p{L})([Ll])e\.la (?=\p{L})/gu, (m, l) => `${l}e `],
+  // « du·de la Jammeur·se » → « du Jammeur », « au·à la » → « au »
+  [/(?<!\p{L})([Dd]u|[Aa]u)[·⋅](?:de|à) la /gu, (m, det) => `${det} `],
+];
+
+// Paires où la forme masculine n'est pas simplement le début du mot.
+const PAIRS_M = {
+  "la·le": "le", "le·a": "le",
+  "une·un": "un",
+  "elle·il": "il", "elles·ils": "ils", "elle·lui": "lui", "lui·elle": "lui",
+  "elles·eux": "eux", "celles·ceux": "ceux", "celle·celui": "celui",
+  "sa·son": "son", "ce·tte": "ce",
+  "tou·tes": "tous", "tous·tes": "tous", "tous·toutes": "tous", "tout·es": "tous", "toute·s": "tous",
+  "nouveau·elle": "nouveau", "nouveaux·elles": "nouveaux",
+};
+
+// « Jammeur·se » → « Jammeur », « pénalisé·es » → « pénalisés », « co-équipièr·es » → « co-équipiers »…
+function masculine(base, rest) {
+  const word = base.replace(/èr$/, "er");
+  const plural = rest.endsWith("s") && !/[sx]$/.test(word);
+  return plural ? `${word}s` : word;
+}
+
+export function masculinize(text) {
+  if (typeof text !== "string" || !/[·⋅]|iel/i.test(text)) return text;
+  let out = text;
+  for (const [re, fn] of PHRASES_M) out = out.replace(re, fn);
+  out = out.replace(/(\p{L}+)((?:[·⋅]\p{L}+)+)( ?)/gu, (m, base, rest, space, offset, str) => {
+    const marked = base + rest;
+    const key = marked.toLowerCase().replace(/⋅/g, "·");
+    const word = PAIRS_M[key] ? keepCase(marked, PAIRS_M[key]) : masculine(base, rest);
+    // Devant une voyelle : « le·la Officiel·le » → « l’Officiel », « ce·tte arbitre » → « cet arbitre »
+    if (space && /^[aeiouyéèêàâîôûœh]/i.test(str.slice(offset + m.length))) {
+      if (/^le$/i.test(word)) return keepCase(word, "l’");
+      if (/^ce$/i.test(word)) return `${word}t `;
+    }
+    return word + space;
+  });
+  return out.replace(/(?<!\p{L})([Ii])elle(s?)(?!\p{L})/gu, (m, i, pl) => `${i}l${pl}`);
 }
 
 // Clés dont la valeur n'est jamais du texte affiché.

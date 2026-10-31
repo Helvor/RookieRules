@@ -8,7 +8,7 @@ Application web pour réviser les règles du roller derby (WFTDA, version de jan
 - **Examen blanc** : 20 questions, 30 secondes par question, réussite à 17/20.
 - **Révisions** : reprise des questions ratées (progression enregistrée uniquement dans le navigateur).
 - **Règles** : texte intégral (règles, appendices, glossaire, livret de mises en situation) avec les schémas du PDF, recherche par mot-clé ou par numéro (`4.1.2`, `C4.3.D`…). Chaque question renvoie vers la règle correspondante.
-- **Écriture** : textes en écriture inclusive (point médian, comme la traduction officielle), avec une option « tout au féminin » plus facile à lire (dyslexie, lecteurs d'écran), dans la page Réglages.
+- **Écriture** : textes en écriture inclusive (point médian, comme la traduction officielle), avec des options « tout au féminin » et « tout au masculin » plus faciles à lire (dyslexie, lecteurs d'écran), dans la page Réglages.
 - **Hors ligne** : installable sur téléphone (PWA), fonctionne sans connexion après la première visite.
 - **Français / anglais** : bouton de langue en haut de page. La langue du navigateur est utilisée par défaut, le choix est ensuite mémorisé (`?lang=en` ou `?lang=fr` dans l'adresse force une langue). En anglais, l'interface, les questions et le texte des règles (texte officiel de la WFTDA) sont en anglais. La progression est commune aux deux langues.
 
@@ -56,11 +56,11 @@ Le script contrôle, pour chaque langue, les identifiants, les références aux 
 
 Les textes de l'interface sont dans `assets/js/i18n.js` (un dictionnaire par langue).
 
-## Écriture inclusive et option « tout au féminin »
+## Écriture inclusive et options « tout au féminin » / « tout au masculin »
 
 Questions, explications et textes de l'interface s'écrivent en écriture inclusive avec le point médian, comme les règles officielles : `le·la Jammeur·se`, `pénalisé·e`, `ielle`. Pour les mots sans marque, écrire aussi la forme inclusive des déterminants (`son·sa Pivot`, `un·e Capitaine`).
 
-L'option « tout au féminin » (page Réglages, `assets/js/prefs.js`) convertit tous ces textes au chargement avec `assets/js/ecriture.js` : `la Jammeuse`, `pénalisée`, `elle`. Un texte d'interface genré passe par `prefs.w("…")`. Les formes irrégulières sont listées dans `PAIRS` et `PHRASES`. Pour vérifier la conversion (plus aucun point médian, réponses toujours distinctes) :
+L'option « tout au féminin » (page Réglages, `assets/js/prefs.js`) convertit tous ces textes au chargement avec `assets/js/ecriture.js` : `la Jammeuse`, `pénalisée`, `elle`. Un texte d'interface genré passe par `prefs.w("…")`. Les formes irrégulières sont listées dans `PAIRS` et `PHRASES`. L'option « tout au masculin » fonctionne de la même façon (`masculinize`, `PAIRS_M`, `PHRASES_M`) : `le Jammeur`, `pénalisé`, `il`. Pour vérifier la conversion (plus aucun point médian, réponses toujours distinctes) :
 
 ```sh
 node tools/check_ecriture.mjs          # --list affiche chaque forme et sa conversion
