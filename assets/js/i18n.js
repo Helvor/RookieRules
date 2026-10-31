@@ -52,7 +52,7 @@ const STRINGS = {
   fr: {
     "meta.description": "Révise les règles du roller derby (WFTDA, version française) avec des séries de questions, un examen blanc et les règles complètes consultables hors ligne.",
     "skip": "Aller au contenu",
-    "brand.label": "RookieRules, accueil",
+    "brand.label": "Track Rules, accueil",
     "nav.label": "Navigation principale",
     "nav.home": "Accueil",
     "nav.train": "Entraînement",
@@ -186,16 +186,16 @@ const STRINGS = {
     "settings.title": "Réglages",
     "settings.frOnly": "",
     "about.title": "À propos",
-    "about.heading": "À propos de RookieRules",
+    "about.heading": "À propos de Track Rules",
     "about.body": ({ title, version, copyright, source }) => `
-      <p>RookieRules aide les rookies (et les autres !) à apprendre les règles du roller derby sur piste plate, à la manière d’un entraînement au code de la route. L’application fonctionne hors ligne une fois chargée et enregistre ta progression uniquement dans ton navigateur.</p>
+      <p>Track Rules aide tout le monde à apprendre et à retrouver les règles du roller derby sur piste plate : rookies, joueur·euses confirmé·es, arbitres et officiel·les. On s’y entraîne comme au code de la route, et on y cherche une règle en quelques secondes. L’application fonctionne hors ligne une fois chargée et enregistre ta progression uniquement dans ton navigateur.</p>
       <h3 class="sec">Droits et crédits</h3>
       <p><strong>Règles :</strong> « ${title} » (${version}), traduction française officielle. ${copyright}. Le texte des règles, du glossaire et du livret de mises en situations ainsi que les schémas sont reproduits depuis le document publié par la WFTDA :
         <a href="${source}" target="_blank" rel="noopener">${source}</a>. Version en ligne : <a href="https://rules.wftda.com/" target="_blank" rel="noopener">rules.wftda.com</a>.</p>
       <p><strong>Schéma du Track :</strong> design © 2002 Electra Blu/Amy Sherman, Texas Rollergirls, utilisé dans les règles avec leur permission.</p>
       <p><strong>Traduction :</strong> équipe bénévole de traduction des règles de la WFTDA en français (voir la note sur <a href="#/regles/ecriture-inclusive">l’écriture inclusive</a>).</p>
-      <p><strong>Questions :</strong> les questions et explications ont été rédigées pour RookieRules à partir des règles. Elles ne sont pas officielles et peuvent contenir des erreurs : chaque question renvoie à la règle correspondante, qui fait foi.</p>
-      <p>RookieRules n’est ni affilié à la WFTDA, ni approuvé par elle. En cas de doute ou de divergence, seule la version officielle des règles s’applique.</p>
+      <p><strong>Questions :</strong> les questions et explications ont été rédigées pour Track Rules à partir des règles. Elles ne sont pas officielles et peuvent contenir des erreurs : chaque question renvoie à la règle correspondante, qui fait foi.</p>
+      <p>Track Rules n’est ni affilié à la WFTDA, ni approuvé par elle. En cas de doute ou de divergence, seule la version officielle des règles s’applique.</p>
       <h3 class="sec">Langue</h3>
       <p>L’application existe aussi en anglais, avec le texte officiel des règles en anglais : bouton « English » en haut de la page.</p>
       <h3 class="sec">Signaler une erreur</h3>
@@ -208,7 +208,7 @@ const STRINGS = {
   en: {
     "meta.description": "Study the roller derby rules (WFTDA) with random question series, a timed mock exam and the full rules, searchable and available offline.",
     "skip": "Skip to content",
-    "brand.label": "RookieRules, home",
+    "brand.label": "Track Rules, home",
     "nav.label": "Main navigation",
     "nav.home": "Home",
     "nav.train": "Practice",
@@ -342,15 +342,15 @@ const STRINGS = {
     "settings.title": "Settings",
     "settings.frOnly": "The writing style options below only apply to the French version of the app (questions and rules in French). The English version is not affected.",
     "about.title": "About",
-    "about.heading": "About RookieRules",
+    "about.heading": "About Track Rules",
     "about.body": ({ title, version, copyright, source }) => `
-      <p>RookieRules helps rookies (and everyone else!) learn the rules of flat track roller derby, the way you would study for a driving theory test. The app works offline once loaded and only stores your progress in your browser.</p>
+      <p>Track Rules helps everyone learn and look up the rules of flat track roller derby: rookies, experienced skaters, referees and officials. Practise the way you would study for a driving theory test, and find any rule in seconds. The app works offline once loaded and only stores your progress in your browser.</p>
       <h3 class="sec">Rights and credits</h3>
       <p><strong>Rules:</strong> “${title}” (${version}). ${copyright}. The text of the rules, glossary and casebook, and the diagrams, are reproduced from the official WFTDA rules website:
         <a href="${source}" target="_blank" rel="noopener">${source}</a>. PDF version: <a href="https://static.wftda.com/rules/wftda-rules.pdf" target="_blank" rel="noopener">wftda-rules.pdf</a>.</p>
       <p><strong>Track diagram:</strong> Track Layout and Design © 2002 Electra Blu/Amy Sherman, Texas Rollergirls, used in the rules with permission.</p>
-      <p><strong>Questions:</strong> the questions and explanations were written for RookieRules based on the rules. They are not official and may contain mistakes: each question links to the relevant rule, which is authoritative.</p>
-      <p>RookieRules is not affiliated with or endorsed by the WFTDA. In case of doubt or discrepancy, only the official rules apply.</p>
+      <p><strong>Questions:</strong> the questions and explanations were written for Track Rules based on the rules. They are not official and may contain mistakes: each question links to the relevant rule, which is authoritative.</p>
+      <p>Track Rules is not affiliated with or endorsed by the WFTDA. In case of doubt or discrepancy, only the official rules apply.</p>
       <h3 class="sec">Language</h3>
       <p>The app is also available in French, with the official French translation of the rules: use the “Français” button at the top of the page.</p>
       <h3 class="sec">Report a mistake</h3>

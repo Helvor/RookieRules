@@ -1,4 +1,4 @@
-// RookieRules : routeur et vues de l'application.
+// Track Rules : routeur et vues de l'application.
 import { esc, norm, parseHash } from "./util.js";
 import { feminize } from "./ecriture.js";
 import * as store from "./store.js";
@@ -55,7 +55,7 @@ function go(hash) {
 }
 
 function setTitle(title) {
-  document.title = title ? `${title} · RookieRules` : "RookieRules";
+  document.title = title ? `${title} · Track Rules` : "Track Rules";
 }
 
 function focusMain() {
