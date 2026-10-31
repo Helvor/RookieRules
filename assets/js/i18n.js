@@ -68,8 +68,8 @@ const STRINGS = {
     "sheet.title": "Règle",
     "close": "Fermer",
 
-    "home.title": "Révise les règles du roller derby",
-    "home.lead": "Comme pour le code de la route : des séries de questions tirées au hasard, un examen blanc chronométré, et les règles officielles WFTDA en français, consultables à tout moment.",
+    "home.title": "Les règles du roller derby, à réviser et à retrouver",
+    "home.lead": "Cherche une règle par mot-clé ou par numéro, ou entraîne-toi comme pour le code de la route : séries de questions, examen blanc chronométré, et les règles officielles WFTDA en français.",
     "home.quick": "Série rapide",
     "home.quickText": "20 questions au hasard sur tous les thèmes, avec la correction et la règle après chaque réponse.",
     "home.exam": "Examen blanc",
@@ -127,7 +127,7 @@ const STRINGS = {
     "quiz.timer": ({ left }) => `⏱ ${left} s`,
 
     "results.title": "Résultats",
-    "results.examPassed": "Examen réussi 🎉",
+    "results.examPassed": "Examen réussi !",
     "results.examFailed": "Examen non réussi",
     "results.great": "Excellent !",
     "results.ok": "Pas mal, continue !",
@@ -224,8 +224,8 @@ const STRINGS = {
     "sheet.title": "Rule",
     "close": "Close",
 
-    "home.title": "Study the roller derby rules",
-    "home.lead": "Like a driving theory test: random question series, a timed mock exam, and the official WFTDA rules, available at any time.",
+    "home.title": "The roller derby rules, to study and look up",
+    "home.lead": "Look up a rule by keyword or number, or practise like a driving theory test: question series, a timed mock exam, and the official WFTDA rules.",
     "home.quick": "Quick series",
     "home.quickText": "20 random questions on every topic, with the answer and the rule after each question.",
     "home.exam": "Mock exam",
@@ -283,7 +283,7 @@ const STRINGS = {
     "quiz.timer": ({ left }) => `⏱ ${left} s`,
 
     "results.title": "Results",
-    "results.examPassed": "Exam passed 🎉",
+    "results.examPassed": "Exam passed!",
     "results.examFailed": "Exam not passed",
     "results.great": "Excellent!",
     "results.ok": "Not bad, keep going!",

@@ -94,3 +94,5 @@ Le script régénère `data/rules.en.json` et télécharge les schémas officiel
 Le texte des règles et les schémas sont © 2025 Women's Flat Track Derby Association (WFTDA), traduction réalisée par l'équipe bénévole de traduction de la WFTDA. Schéma de la piste © 2002 Electra Blu / Amy Sherman, Texas Rollergirls. Sources officielles : https://static.wftda.com/rules/wftda-rules-french.pdf (français) et https://rules.wftda.com (anglais).
 
 Track Rules est un outil d'entraînement non officiel, sans lien avec la WFTDA. Les questions ne sont pas officielles : en cas de doute, le texte des règles fait foi.
+
+Polices embarquées (dans `assets/fonts/`, pour fonctionner hors ligne) : [Archivo](https://github.com/Omnibus-Type/Archivo) pour les titres et [Atkinson Hyperlegible Next](https://github.com/googlefonts/atkinson-hyperlegible-next) pour le texte, toutes deux sous licence SIL Open Font License 1.1 (voir `licenses/`).
